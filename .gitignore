@@ -1,0 +1,9 @@
+temp/
+bin/*
+solr/dist/*
+solr/contrib/*
+solr-collections/*/*
+server/solr-webapp/*
+server/logs/*
+server/lib/*
+server/webapps/*.war

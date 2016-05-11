@@ -1,0 +1,97 @@
+#!/bin/sh
+ 
+### BEGIN INIT INFO
+# Provides:          solrstart_globalsearch
+# Required-Start:    $all
+# Required-Stop:     $remote_fs $syslog
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: Start daemon at boot time
+# Description:       Enable service provided by daemon.
+### END INIT INFO
+ 
+# Prerequisites:
+# 1. Java must be installed (sudo apt-get install openjdk-6-jdk)
+# 2. Solr needs to be installed at /usr/local/solr/MYSOLRINSTANCE (Replace MYSOLRINSTANCE with the name if directory you wish to use for your Solr instance)
+# 3. daemon needs to be installed (sudo apt-get install daemon)
+# 4. Script needs to be executed by root
+ 
+# This script will launch Solr in a mode that will automatically re-spawn if it
+# crashes. Output will be sent to /var/log/solr/solr.log. A PID file will be
+# created in the standard location.
+
+# http://www.demacmedia.com/magento-commerce/mini-tutorial-solr-startup-script/
+
+SOLRCOMMAND="./klinkSolr-globalsearch.sh"
+SOLRDIR="/opt/solr/"
+ 
+start () {
+    echo -n "Starting solr..."
+ 
+    # Start daemon (Replace MYSOLRINSTANCE with the name if directory you wish to use for your solr instance)
+    # daemon --chdir='/usr/local/solr/MYSOLRINSTANCE' --command "java -jar start.jar" --respawn --output=/var/log/solr/solr.log --name=solr --verbose
+    
+    cd $SOLRDIR
+    $SOLRCOMMAND start
+
+    RETVAL=$?
+    if [ $RETVAL = 0 ]
+    then
+        echo "done."
+    else
+        echo "failed. See error code for more information."
+    fi
+    return $RETVAL
+}
+ 
+stop () {
+    # Stop daemon
+    echo -n "Stopping solr..."
+ 
+    # daemon --stop --name=solr  --verbose
+    cd $SOLRDIR
+    $SOLRCOMMAND stop
+    RETVAL=$?
+ 
+    if [ $RETVAL = 0 ]
+    then
+        echo "Done."
+    else
+        echo "Failed. See error code for more information."
+    fi
+    return $RETVAL
+}
+ 
+restart () {
+    # daemon --restart --name=solr  --verbose
+    echo "restart not implemented"
+}
+ 
+status () {
+    # Report on the status of the daemon
+    # daemon --running --verbose --name=solr
+    cd $SOLRDIR
+    $SOLRCOMMAND status
+    return $?
+}
+ 
+case "$1" in
+    start)
+        start
+    ;;
+    status)
+        status
+    ;;
+    stop)
+        stop
+    ;;
+    restart)
+        restart
+    ;;
+    *)
+        echo "Usage: solr {start|status|stop|restart}"
+        exit 3
+    ;;
+esac
+ 
+exit $RETVAL
