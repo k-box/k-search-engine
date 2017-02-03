@@ -3,6 +3,11 @@ stages:
 
 variables:
     CONTAINER_RELEASE_IMAGE_BASE: $CI_REGISTRY/images/solr
+    GIT_SUBMODULE_STRATEGY: normal
+
+before_script:
+  - git submodule sync
+  - git submodule update --init
 
 push:
     stage: release

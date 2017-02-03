@@ -1,9 +1,11 @@
+bin/
+server/
 temp/
-bin/*
-solr/dist/*
-solr/contrib/*
-solr-collections/*/*
-server/solr-webapp/*
-server/logs/*
-server/lib/*
-server/webapps/*.war
+contrib/
+dist/
+
+# Do not commit Solr core conf folders
+solr-private/
+!solr-private/klink-private/data/.gitkeep
+solr-cloud/
+!solr-cloud/klink-public/data/.gitkeep

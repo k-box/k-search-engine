@@ -1,14 +1,25 @@
-FROM openjdk:7-jre
+FROM openjdk:8-jre
 
 # consider this alternative image:
 # https://registry.hub.docker.com/u/makuk66/docker-solr/
 ENV LANGUAGE en
 ENV LC_ALL $LANG
+ENV KLINK_SOLR_VERSION 5.5.3
 
 COPY . /opt/solr
 ENV KLINK_SETUP_DOWNLOADFOLDER /opt/solr/downloads
 
-RUN curl --retry 10 --output $KLINK_SETUP_DOWNLOADFOLDER/solr-4.10.4.zip http://archive.apache.org/dist/lucene/solr/4.10.4/solr-4.10.4.zip \
+# Coping over the conf directory and properties
+RUN cp -r /opt/solr/solr-conf/conf            /opt/solr/solr-cloud/klink-public/ \
+ && cp -r /opt/solr/solr-conf/core.properties /opt/solr/solr-cloud/klink-public/ \
+ && cp -r /opt/solr/solr-conf/solr.xml        /opt/solr/solr-cloud/
+
+RUN cp -r /opt/solr/solr-conf/conf            /opt/solr/solr-private/klink-private/ \
+ && cp -r /opt/solr/solr-conf/core.properties /opt/solr/solr-private/klink-private/ \
+ && cp -r /opt/solr/solr-conf/solr.xml        /opt/solr/solr-private/
+
+
+RUN curl --retry 10 --output $KLINK_SETUP_DOWNLOADFOLDER/solr-${KLINK_SOLR_VERSION}.zip http://archive.apache.org/dist/lucene/solr/${KLINK_SOLR_VERSION}/solr-${KLINK_SOLR_VERSION}.zip \
 	&& cd /opt/solr && ./updateSolr.sh \
     && rm -rf ${KLINK_SETUP_DOWNLOADFOLDER}/*
 

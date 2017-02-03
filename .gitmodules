@@ -1,0 +1,4 @@
+[submodule "solr-conf"]
+	path = solr-conf
+	url = https://git.klink.asia/publication-sandbox/k-search-engine-configuration.git
+	branch = solr-5
