@@ -4,7 +4,7 @@ FROM openjdk:8-jre
 # https://registry.hub.docker.com/u/makuk66/docker-solr/
 ENV LANGUAGE en
 ENV LC_ALL $LANG
-ENV KLINK_SOLR_VERSION 5.5.3
+ENV KLINK_SOLR_VERSION 5.5.4
 
 COPY . /opt/solr
 ENV KLINK_SETUP_DOWNLOADFOLDER /opt/solr/downloads
