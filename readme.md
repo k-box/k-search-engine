@@ -47,8 +47,8 @@ docker build -t k-search-engine .
 
 ### Optimization
 
-Sometimes the Search Engine index needs to be optimized. This ensure better performance and 
-efficient space usage. Index optimization is often required after search engine upgrades.
+Sometimes the Search Engine index needs to be optimized. Index optimization is required after 
+search engine upgrades (before adding new documents).
 
 To execute the index optimization run
 
