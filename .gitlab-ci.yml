@@ -1,0 +1,65 @@
+stages:
+    - build
+    - release
+
+variables:
+    CONTAINER_RELEASE_IMAGE_BASE: $CI_REGISTRY/images/k-search-engine
+    GIT_SUBMODULE_STRATEGY: normal
+
+before_script:
+  - git submodule sync
+  - git submodule update --init
+
+build:
+    stage: build
+    tags:
+        - shell
+    script:
+        - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN -e info@klink.asia $CI_REGISTRY
+        - docker build -t $CI_REGISTRY_IMAGE:${CI_BUILD_REF_NAME//\//-} .
+        - docker push $CI_REGISTRY_IMAGE:${CI_BUILD_REF_NAME//\//-}
+
+push_master:
+    stage: release
+    tags:
+        - shell
+    script:
+        - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN -e info@klink.asia $CI_REGISTRY
+        - docker pull $CI_REGISTRY_IMAGE:${CI_BUILD_REF_NAME//\//-}
+        - docker login -u $REGISTRY_RELEASE_USERNAME -p $REGISTRY_RELEASE_PASSWORD -e info@klink.asia $CI_REGISTRY
+        - docker tag -f $CI_REGISTRY_IMAGE:${CI_BUILD_REF_NAME//\//-} "$CONTAINER_RELEASE_IMAGE_BASE:latest"
+        - docker push "$CONTAINER_RELEASE_IMAGE_BASE:latest"
+    only:
+        - master
+
+push_tags:
+    stage: release
+    tags:
+        - shell
+    script:
+        - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN -e info@klink.asia $CI_REGISTRY
+        - docker pull $CI_REGISTRY_IMAGE:${CI_BUILD_REF_NAME//\//-}
+        - docker login -u $REGISTRY_RELEASE_USERNAME -p $REGISTRY_RELEASE_PASSWORD -e info@klink.asia $CI_REGISTRY
+        - docker tag -f $CI_REGISTRY_IMAGE:${CI_BUILD_REF_NAME//\//-} "$CONTAINER_RELEASE_IMAGE_BASE:${CI_BUILD_REF_NAME/v/}"
+        - docker push "$CONTAINER_RELEASE_IMAGE_BASE:${CI_BUILD_REF_NAME/v/}"
+    only:
+        - tags
+
+tar:
+    stage: release
+    script:
+        - "git archive --prefix=solr/ --format=tar.gz ${CI_BUILD_REF} > /var/www/temp/builds/k-search-engine-${CI_BUILD_REF_NAME}.tar.gz"
+    tags:
+        - shell
+    only:
+        - master
+        - develop
+
+tar-tag:
+    stage: release
+    script:
+        - "git archive --prefix=solr/ --format=tar.gz ${CI_BUILD_REF} > /var/www/temp/builds/k-search-engine-$(echo ${CI_BUILD_REF_NAME} | sed 's/^v//').tar.gz"
+    tags:
+        - shell
+    only:
+        - tags

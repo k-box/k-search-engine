@@ -1,0 +1,3 @@
+[submodule "solr-conf"]
+	path = solr-conf
+	url = https://git.klink.asia/main/k-search-engine-conf.git
