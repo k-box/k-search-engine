@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [0.2.0] - 2017-10-04
+
+### Changed
+
+- Updated solr configuration to commit `ac3c344`. This includes integer 
+  indexing and better string indexing support
 
 ## [0.1.0] - 2017-05-31
 
