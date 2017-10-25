@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [0.2.1] - 2017-10-25
+
+### Added
+
+- Ability to trigger a deployment on the test.slmtj.net integration environment
+
+### Changed
+
+- Updated solr configuration to commit `66472e0653`. 
+  This includes date format fix when adding or updating a previously added data
+- Updated `.gitlab-ci.yml` to use Gitlab's new environment variable names
+
 ## [0.2.0] - 2017-10-04
 
 ### Changed
