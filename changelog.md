@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [0.2.2] - 2017-11-01
+
+### Changed
+
+- Updated solr configuration to commit `a459883c6`, which reverts a change
+  that caused regression bugs in the handling of datetime strings.
+
 ## [0.2.1] - 2017-10-25
 
 ### Added
