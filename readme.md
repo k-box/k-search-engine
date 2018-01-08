@@ -35,10 +35,6 @@ docker run -it --rm -p "8983:8983" --name="k-search-engine" -v "./local-folder:/
 To build the image execute the `docker build` command.
 
 ```
-# Pull the solr-conf submodule
-git submodule sync
-git submodule update --init
-
 # Build the image
 docker build -t k-search-engine .
 ```
