@@ -83,3 +83,7 @@ While in the log you should see an entry with `Starting optimize...`
 [...] o.a.s.u.DirectUpdateHandler2 end_commit_flush
 [...] o.a.s.u.p.LogUpdateProcessorFactory [k-search]  webapp=/solr pa
 ```
+
+## License
+
+This project is licensed under the AGPL v3 license, see [LICENSE.txt](./LICENSE.txt).
