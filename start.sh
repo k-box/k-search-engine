@@ -27,6 +27,12 @@ case "${COMMAND}" in
         echo "Starting K-Search Engine..."
         exec ./bin/solr start -f -p ${PORT} -s "${DIR}/${INDEX_NAME}" -m ${SOLR_MEMORY}
     ;;
+    'help')
+        echo "Available commands"
+        echo "- start (default): starts an instance on port 8983"
+        echo "- optimize: perform index optimization on a running instance"
+        echo "- help: output this message"
+    ;;
     'optimize')
         echo "Optimizing the index..."
         exec curl "http://localhost:${PORT}/solr/${INDEX_NAME}/update?optimize=true&maxSegments=1&waitFlush=true"

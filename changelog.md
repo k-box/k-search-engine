@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+- Added support for field sorting based on string representation. Ordering is case insensitive.
+
 ## [0.2.2] - 2017-11-01
 
 ### Changed

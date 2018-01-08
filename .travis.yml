@@ -1,0 +1,12 @@
+sudo: required
+
+services:
+  - docker
+
+language: java
+
+before_install:
+- docker build -t k-search-engine .
+
+script:
+- docker run --rm k-search-engine help
