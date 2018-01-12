@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+### Changed
+- Updated Solr to v5.5.5 [PR #2](https://github.com/k-box/k-search-engine/pull/2)
+
 ## [0.3.0] - 2018-01-10
 
 - Added support for field sorting based on string representation. Ordering is case insensitive.

@@ -4,7 +4,7 @@ ENV LANGUAGE en
 ENV LC_ALL $LANG
 
 ## The SOLR version to be used
-ENV SOLR_VERSION "5.5.4"
+ENV SOLR_VERSION "5.5.5"
 
 ## Where we will install everything
 ENV SOLR_DEPLOY_DIR "/opt/solr"
