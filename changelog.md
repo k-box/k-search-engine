@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+### Added
+- Updated field configuration for `filename_*` fields [PR-3](https://github.com/k-box/k-search-engine/pull/3)
+
 ## [0.3.1] - 2018-01-12
 
 ### Changed
