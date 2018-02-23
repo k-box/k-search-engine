@@ -21,13 +21,18 @@ RUN echo "Downloading SOLR ${SOLR_VERSION}..." \
     && curl --progress-bar --retry 10 --output "${SOLR_DOWNLOAD_DIR}/solr-${SOLR_VERSION}.zip" "http://archive.apache.org/dist/lucene/solr/${SOLR_VERSION}/solr-${SOLR_VERSION}.zip" \
     && curl --progress-bar --retry 10 --output "${SOLR_DOWNLOAD_DIR}/solr-${SOLR_VERSION}.zip.sha1" "http://archive.apache.org/dist/lucene/solr/${SOLR_VERSION}/solr-${SOLR_VERSION}.zip.sha1" \
     && echo "Verifying file checksum..." \ 
-    && cd $SOLR_DOWNLOAD_DIR && sha1sum -c "solr-${SOLR_VERSION}.zip.sha1" && cd $SOLR_DEPLOY_DIR \
+    && cd $SOLR_DOWNLOAD_DIR && sha1sum -c "solr-${SOLR_VERSION}.zip.sha1" \
+    && cd $SOLR_DEPLOY_DIR \
     && echo "Extracting SOLR ${SOLR_VERSION}..." \ 
     && unzip -qq -o -d "${SOLR_DOWNLOAD_DIR}/solr-${SOLR_VERSION}" "${SOLR_DOWNLOAD_DIR}/solr-${SOLR_VERSION}.zip" \
     && echo "Deploy SOLR folders Context... " \
-    && cd "${SOLR_DOWNLOAD_DIR}/solr-${SOLR_VERSION}/solr-${SOLR_VERSION}" && cp --force --recursive --target-directory="${SOLR_DEPLOY_DIR}" bin contrib dist server && cd $SOLR_DEPLOY_DIR \
+    && cd "${SOLR_DOWNLOAD_DIR}/solr-${SOLR_VERSION}/solr-${SOLR_VERSION}" \
+    && cp --force --recursive --target-directory="${SOLR_DEPLOY_DIR}" bin contrib dist server && cd $SOLR_DEPLOY_DIR \
     && echo "Cleaning up temporary files... " \
-    && rm -r "${SOLR_DOWNLOAD_DIR}"
+    && rm -r "${SOLR_DOWNLOAD_DIR}" \
+    && echo "Adding SOLR extraction library..." \
+    && curl --progress-bar --retry 10 --output "${SOLR_DEPLOY_DIR}/contrib/extraction/lib/jhighlight-1.0.jar" "https://repo1.maven.org/maven2/com/uwyn/jhighlight/1.0/jhighlight-1.0.jar" \
+    && echo "Done!"
 
 ## Copying over the configuration
 COPY . /opt/solr
