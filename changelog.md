@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+### Added
+
+- jhighlight 1.0 library to support extracting text from Java, C++, and Groovy attachments embedded in PDF files
+
 ## [0.4.0] - 2018-02-09
 ### Added
 - Updated field configuration for `filename_*` fields [PR-3](https://github.com/k-box/k-search-engine/pull/3)
