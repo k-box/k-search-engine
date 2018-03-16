@@ -6,10 +6,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/0.3.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
+## [0.4.1] - 2018-03-16
 
 ### Added
 
-- jhighlight 1.0 library to support extracting text from Java, C++, and Groovy attachments embedded in PDF files
+- jhighlight 1.0 library to support extracting text from Java, C++, and Groovy attachments embedded in PDF files [PR-5](https://github.com/k-box/k-search-engine/pull/5)
 
 ## [0.4.0] - 2018-02-09
 ### Added
