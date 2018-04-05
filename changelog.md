@@ -7,9 +7,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [0.4.2] - 2018-04-05
+
 ### Changed
 
-- Increased maximum header size for request to 512KB to accomodate long URIs
+- Increased maximum header size for request to 10MiB to accomodate long URIs
 - Increased max form post from 100 MiByte to 500 MiByte
 
 ## [0.4.1] - 2018-03-16
