@@ -7,7 +7,7 @@
   <Set name="extractWAR">false</Set>
 
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
-  <!-- Max Form Size (100 MiByte)                                      -->
+  <!-- Max Form Size (500 MiByte)                                      -->
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
-  <Set name="maxFormContentSize">104857600</Set>
+  <Set name="maxFormContentSize">524288000</Set>
 </Configure>
