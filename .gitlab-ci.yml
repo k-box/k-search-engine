@@ -57,7 +57,7 @@ deploy_test_slmtj:
     - docker-compose down && docker-compose up -d
 
 deploy_test_klink_asia:
-  environment: Integration
+  environment: Review
   when: manual
   stage: deploy
   tags:
