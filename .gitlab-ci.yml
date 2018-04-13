@@ -55,3 +55,18 @@ deploy_test_slmtj:
     - cd ${INTEGRATION_DOCKER_FOLDER}
     - docker tag $CI_REGISTRY_IMAGE:${CI_COMMIT_REF_NAME/v/} $INTEGRATION_DOCKER_IMAGE
     - docker-compose down && docker-compose up -d
+
+deploy_test_klink_asia:
+  environment: Integration
+  when: manual
+  stage: deploy
+  tags:
+    - shell
+    - deploy
+  script:
+    - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
+    - docker pull $CI_REGISTRY_IMAGE:${CI_COMMIT_REF_NAME/v/}
+    - cd ${REVISION_DOCKER_FOLDER}
+    - docker tag $CI_REGISTRY_IMAGE:${CI_COMMIT_REF_NAME/v/} $REVISION_DOCKER_IMAGE
+    - docker-compose down && docker-compose up -d
+
