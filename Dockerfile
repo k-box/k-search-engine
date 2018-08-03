@@ -4,7 +4,7 @@ ENV LANGUAGE en
 ENV LC_ALL $LANG
 
 ## The SOLR version to be used
-ENV SOLR_VERSION "5.5.5"
+ENV SOLR_VERSION "7.4.0"
 
 ## Where we will install everything
 ENV SOLR_DEPLOY_DIR "/opt/solr"
@@ -18,8 +18,8 @@ WORKDIR /opt/solr
 ## Download and extract SOLR, then install it 
 RUN echo "Downloading SOLR ${SOLR_VERSION}..." \ 
     && mkdir $SOLR_DOWNLOAD_DIR \
-    && curl --progress-bar --retry 10 --output "${SOLR_DOWNLOAD_DIR}/solr-${SOLR_VERSION}.zip" "http://archive.apache.org/dist/lucene/solr/${SOLR_VERSION}/solr-${SOLR_VERSION}.zip" \
-    && curl --progress-bar --retry 10 --output "${SOLR_DOWNLOAD_DIR}/solr-${SOLR_VERSION}.zip.sha1" "http://archive.apache.org/dist/lucene/solr/${SOLR_VERSION}/solr-${SOLR_VERSION}.zip.sha1" \
+    && curl --progress-bar --retry 10 --output "${SOLR_DOWNLOAD_DIR}/solr-${SOLR_VERSION}.zip" "https://archive.apache.org/dist/lucene/solr/${SOLR_VERSION}/solr-${SOLR_VERSION}.zip" \
+    && curl --progress-bar --retry 10 --output "${SOLR_DOWNLOAD_DIR}/solr-${SOLR_VERSION}.zip.sha1" "https://archive.apache.org/dist/lucene/solr/${SOLR_VERSION}/solr-${SOLR_VERSION}.zip.sha1" \
     && echo "Verifying file checksum..." \ 
     && cd $SOLR_DOWNLOAD_DIR && sha1sum -c "solr-${SOLR_VERSION}.zip.sha1" \
     && cd $SOLR_DEPLOY_DIR \
@@ -37,7 +37,7 @@ RUN echo "Downloading SOLR ${SOLR_VERSION}..." \
 ## Copying over the configuration
 COPY . /opt/solr
 
-## Apply the configuration and make sure the start.sh script is exectable
+## Apply the configuration and make sure the start.sh script is executable
 RUN cp -r ./solr-conf/conf ${SOLR_DEPLOY_DIR}/${INDEX_NAME}/${INDEX_NAME}/ \
     && cp -r ./solr-conf/core.properties ${SOLR_DEPLOY_DIR}/${INDEX_NAME}/${INDEX_NAME}/ \
     && cp -r ./solr-conf/solr.xml ${SOLR_DEPLOY_DIR}/${INDEX_NAME}/ \
