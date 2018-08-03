@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+### Changed
+- Update to Solr v7.4.0
+
 ## [0.4.2] - 2018-04-05
 
 ### Changed
