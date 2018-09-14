@@ -4,7 +4,6 @@ set -e
 cd /opt/solr
 
 DIR=$(pwd)
-CORE="k-search"
 COMMAND=${1}
 PORT=8983
 
@@ -13,7 +12,7 @@ SOLR_MEMORY=${SOLR_MEMORY:-512m}
 
 ## SIGTERM-handler, used when container is requested to be stopped
 term_handler() {
-  exec /opt/solr/bin/solr stop -p ${PORT} -s "${DIR}/${CORE}"
+  exec /opt/solr/bin/solr stop -p ${PORT} -s "${DIR}/${INDEX_NAME}"
   exit 143; # 128 + 15 -- SIGTERM
 }
 
