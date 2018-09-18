@@ -1,4 +1,5 @@
 stages:
+    - lint
     - build
     - release
     - deploy
@@ -6,6 +7,14 @@ stages:
 variables:
     CONTAINER_RELEASE_IMAGE_BASE: $CI_REGISTRY/images/k-search-engine
     GIT_SUBMODULE_STRATEGY: normal
+
+test-shell-syntax:
+  stage: lint
+  image: "docker.klink.asia/alessio.vertemati/shellcheck-ci:latest"
+  script:
+    - shellcheck ./docker/start.sh
+  tags:
+    - docker
 
 build:
     stage: build
@@ -42,7 +51,7 @@ push_tags:
     only:
         - tags
 
-deploy_test_slmtj:
+deploy_integration:
   environment: Integration
   when: manual
   stage: deploy
@@ -56,7 +65,7 @@ deploy_test_slmtj:
     - docker tag $CI_REGISTRY_IMAGE:${CI_COMMIT_REF_NAME/v/} $INTEGRATION_DOCKER_IMAGE
     - docker-compose down && docker-compose up -d
 
-deploy_test_klink_asia:
+deploy_review:
   environment: Review
   when: manual
   stage: deploy

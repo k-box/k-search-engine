@@ -5,8 +5,15 @@ services:
 
 language: java
 
-before_install:
-- docker build -t k-search-engine .
+before_script:
+  # - shellcheck ./start.sh
+  - docker build -t k-search-engine .
 
 script:
-- docker run --rm k-search-engine help
+  - docker-compose -f ./docker-compose.test.yml up -d
+  - sleep 5 # wait for 5 seconds, this should be enough to see startup log entries
+  - docker-compose -f ./docker-compose.test.yml logs > docker_ouput.log
+  - cat docker_output.log
+
+after_script:
+  - docker-compose -f ./docker-compose.test.yml down
