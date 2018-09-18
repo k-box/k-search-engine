@@ -1,4 +1,5 @@
 stages:
+    - lint
     - build
     - release
     - deploy
@@ -7,6 +8,14 @@ variables:
     CONTAINER_RELEASE_IMAGE_BASE: $CI_REGISTRY/images/k-search-engine
     GIT_SUBMODULE_STRATEGY: normal
 
+test-shell-syntax:
+  stage: lint
+  image: "docker.klink.asia/alessio.vertemati/shellcheck-ci:latest"
+  script:
+    - shellcheck ./start.sh
+  tags:
+    - docker
+
 build:
     stage: build
     tags:
@@ -14,6 +23,13 @@ build:
     script:
         - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
         - docker build -t $CI_REGISTRY_IMAGE:${CI_COMMIT_REF_NAME//\//-} .
+        - docker tag $CI_REGISTRY_IMAGE:${CI_COMMIT_REF_NAME//\//-} "k-search-engine"
+        - docker-compose -f ./docker-compose.test.yml up -d
+        - sleep 5 # wait for 5 seconds, this should be enough to see startup log entries
+        - docker-compose -f ./docker-compose.test.yml logs > ./docker_ouput.log 2>&1
+        - docker-compose -f ./docker-compose.test.yml down
+        - grep -c "Welcome to Apache Solr" ./docker_ouput.log > null || echo "Welcome phrase not found" && return 1
+        - grep -c "/opt/solr/k-search" ./docker_ouput.log > null || echo "Solr home not found" && return 1
         - docker push $CI_REGISTRY_IMAGE:${CI_COMMIT_REF_NAME//\//-}
 
 push_master:
@@ -42,7 +58,7 @@ push_tags:
     only:
         - tags
 
-deploy_test_slmtj:
+deploy_integration:
   environment: Integration
   when: manual
   stage: deploy
@@ -56,7 +72,7 @@ deploy_test_slmtj:
     - docker tag $CI_REGISTRY_IMAGE:${CI_COMMIT_REF_NAME/v/} $INTEGRATION_DOCKER_IMAGE
     - docker-compose down && docker-compose up -d
 
-deploy_test_klink_asia:
+deploy_review:
   environment: Review
   when: manual
   stage: deploy
