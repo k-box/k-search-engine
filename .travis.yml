@@ -5,6 +5,16 @@ services:
 
 language: java
 
+branches:
+  only:
+  - master
+  - /^v\d+\.\d+(\.\d+)?(-\S*)?$/
+  - /^\d+\.\d+?$/
+
+notifications:
+  email:
+    on_success: never
+
 before_script:
   # - shellcheck ./start.sh
   - docker build -t k-search-engine .
