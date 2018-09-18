@@ -1,19 +1,26 @@
 FROM openjdk:8-jre
 
-ENV LANGUAGE en
-ENV LC_ALL $LANG
+ENV \
+    LANGUAGE=en \
+    LC_ALL=$LANG \
+    SOLR_VERSION="7.4.0" \
+    SOLR_DEPLOY_DIR="/opt/solr" \
+    SOLR_UID=500 \
+    SOLR_GID=500 \
+    SOLR_DOWNLOAD_DIR="${SOLR_DEPLOY_DIR}/downloads" \
+    INDEX_NAME="k-search"
 
-## The SOLR version to be used
-ENV SOLR_VERSION "7.4.0"
-
-## Where we will install everything
-ENV SOLR_DEPLOY_DIR "/opt/solr"
-ENV SOLR_DOWNLOAD_DIR "${SOLR_DEPLOY_DIR}/downloads"
-
-## SOLR index name
-ENV INDEX_NAME "k-search"
+# Create a non-root user solr can run under
+RUN groupadd -r -g ${SOLR_GID} solr && useradd -r -u ${SOLR_UID} -g solr solr
 
 WORKDIR /opt/solr
+
+# Install dependencies
+RUN \
+    apt-get update &&\
+    apt-get --no-install-recommends --yes install gosu &&\
+    apt-get clean &&\
+    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 ## Download and extract SOLR, then install it 
 RUN echo "Downloading SOLR ${SOLR_VERSION}..." \ 
@@ -50,3 +57,4 @@ VOLUME ["/opt/solr/k-search/k-search/data"]
 EXPOSE 8983
 
 ENTRYPOINT ["/opt/solr/start.sh"]
+CMD ["start"]

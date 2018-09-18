@@ -24,21 +24,20 @@ echo "K-Search Engine, based on SOLR ${SOLR_VERSION}."
 
 case "${COMMAND}" in
     'start')
+        echo "Updating file permissions"
+        chown "${SOLR_UID}:${SOLR_GID}" "${DIR}/${INDEX_NAME}" --recursive
         echo "Starting K-Search Engine..."
-        exec ./bin/solr start -f -p ${PORT} -s "${DIR}/${INDEX_NAME}" -m ${SOLR_MEMORY}
-    ;;
-    'help')
-        echo "Available commands"
-        echo "- start (default): starts an instance on port 8983"
-        echo "- optimize: perform index optimization on a running instance"
-        echo "- help: output this message"
+	# FIXME: Force temporary used to allow starting as privileged user
+        exec ./bin/solr start -force -f -p ${PORT} -s "${DIR}/${INDEX_NAME}" -m "${SOLR_MEMORY}"
     ;;
     'optimize')
         echo "Optimizing the index..."
         exec curl "http://localhost:${PORT}/solr/${INDEX_NAME}/update?optimize=true&maxSegments=1&waitFlush=true"
     ;;
     *)
-        echo "Starting K-Search Engine..."
-        exec ./bin/solr start -f -p ${PORT} -s "${DIR}/${INDEX_NAME}" -m ${SOLR_MEMORY}
+        echo "Available commands"
+        echo "- start: starts an instance on port 8983"
+        echo "- optimize: perform index optimization on a running instance"
+        echo "- help (default): output this message"
    ;;
 esac
