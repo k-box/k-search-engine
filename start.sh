@@ -7,6 +7,7 @@ DIR=$(pwd)
 CORE="k-search"
 COMMAND=${1}
 PORT=8983
+INDEX_NAME="k-search"
 
 ## The amount of RAM reserved to the JVM for SOLR
 SOLR_MEMORY=${SOLR_MEMORY:-512m}
