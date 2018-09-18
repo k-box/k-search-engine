@@ -26,7 +26,7 @@ build:
         - docker tag $CI_REGISTRY_IMAGE:${CI_COMMIT_REF_NAME//\//-} "k-search-engine"
         - docker-compose -f ./docker-compose.test.yml up -d
         - sleep 5 # wait for 5 seconds, this should be enough to see startup log entries
-        - docker-compose -f ./docker-compose.test.yml logs &> docker_ouput.log
+        - docker-compose -f ./docker-compose.test.yml logs &> docker_output.log
         - docker-compose -f ./docker-compose.test.yml down
         - grep -c "Welcome to Apache Solr" docker_output.log
         - grep -c "/opt/solr/k-search" docker_output.log
