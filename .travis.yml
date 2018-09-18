@@ -12,8 +12,8 @@ before_script:
 script:
   - docker-compose -f ./docker-compose.test.yml up -d
   - sleep 5 # wait for 5 seconds, this should be enough to see startup log entries
-  - docker-compose -f ./docker-compose.test.yml logs > docker_ouput.log
-  - cat docker_output.log
+  - docker-compose -f ./docker-compose.test.yml logs > ./docker_ouput.log 2>&1
+  - ls && cat docker_output.log
 
 after_script:
   - docker-compose -f ./docker-compose.test.yml down
