@@ -27,7 +27,8 @@ case "${COMMAND}" in
         echo "Updating file permissions"
         chown "${SOLR_UID}:${SOLR_GID}" "${DIR}/${INDEX_NAME}" --recursive
         echo "Starting K-Search Engine..."
-        exec ./bin/solr start -f -p ${PORT} -s "${DIR}/${INDEX_NAME}" -m "${SOLR_MEMORY}"
+	# FIXME: Force temporary used to allow starting as privileged user
+        exec ./bin/solr start -force -f -p ${PORT} -s "${DIR}/${INDEX_NAME}" -m "${SOLR_MEMORY}"
     ;;
     'optimize')
         echo "Optimizing the index..."
