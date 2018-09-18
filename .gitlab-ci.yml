@@ -12,7 +12,7 @@ test-shell-syntax:
   stage: lint
   image: "docker.klink.asia/alessio.vertemati/shellcheck-ci:latest"
   script:
-    - shellcheck ./docker/start.sh
+    - shellcheck ./start.sh
   tags:
     - docker
 
