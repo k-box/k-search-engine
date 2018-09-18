@@ -16,7 +16,7 @@ notifications:
     on_success: never
 
 before_script:
-  # - shellcheck ./start.sh
+  - shellcheck ./start.sh
   - docker build -t k-search-engine .
 
 script:
