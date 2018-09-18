@@ -23,6 +23,13 @@ build:
     script:
         - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
         - docker build -t $CI_REGISTRY_IMAGE:${CI_COMMIT_REF_NAME//\//-} .
+        - docker tag $CI_REGISTRY_IMAGE:${CI_COMMIT_REF_NAME//\//-} "k-search-engine"
+        - docker-compose -f ./docker-compose.test.yml up -d
+        - sleep 5 # wait for 5 seconds, this should be enough to see startup log entries
+        - docker-compose -f ./docker-compose.test.yml logs > ./docker_ouput.log 2>&1
+        - docker-compose -f ./docker-compose.test.yml down
+        - grep -c "Welcome to Apache Solr" ./docker_ouput.log > null || echo "Welcome phrase not found" && return 1
+        - grep -c "/opt/solr/k-search" ./docker_ouput.log > null || echo "Solr home not found" && return 1
         - docker push $CI_REGISTRY_IMAGE:${CI_COMMIT_REF_NAME//\//-}
 
 push_master:
