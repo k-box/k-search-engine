@@ -14,8 +14,7 @@ script:
   - sleep 5 # wait for 5 seconds, this should be enough to see startup log entries
   - docker-compose -f ./docker-compose.test.yml logs > ./docker_ouput.log 2>&1
   - grep -c "Welcome to Apache Solr" ./docker_ouput.log > null || echo "Welcome phrase not found" && return 1
-  - grep -c "Install dir: /opt/solr" ./docker_ouput.log > null || echo "Install dir entry not found" && return 1
-  - grep -c "solr.solr.home: /opt/solr/k-search" ./docker_ouput.log > null || echo "Solr home not found" && return 1
+  - grep -c "/opt/solr/k-search" ./docker_ouput.log > null || echo "Solr home not found" && return 1
 
 after_script:
   - docker-compose -f ./docker-compose.test.yml down
