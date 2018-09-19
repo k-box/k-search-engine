@@ -38,6 +38,6 @@ case "${COMMAND}" in
         echo "Available commands"
         echo "- start: starts an instance on port 8983"
         echo "- optimize: perform index optimization on a running instance"
-        echo "- help (default): output this message"
+        echo "- help: output this message"
    ;;
 esac

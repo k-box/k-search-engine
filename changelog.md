@@ -5,9 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/0.3.0/) 
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.0.1] - 2018-09-19
+
+### Fixes
+
+- Fixed index name in startup script
+- Fixed build problem that prevented Docker image to start
+
 ## [1.0.0] - 2018-08-10
 
+**The docker image for this version was released with a startup bug, please use 1.0.1**
+
 ### Changed
+
 - Updated to Solr v7.4.0
 
 ## [0.4.2] - 2018-04-05

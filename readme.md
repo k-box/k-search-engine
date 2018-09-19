@@ -50,7 +50,10 @@ docker build -t k-search-engine .
 
 ## Versions
 
-Version `0.1.0` is the latest compatible with K-Search API version `2.6`. For K-Search API version `3.0` use version `0.2.0` or above.
+- Version `1.0.1` moved to SOLR 7.4. This version is required to use K-Search API version `3.5`.
+- Version `0.4.x` or below uses SOLR 5.x and can be used up to K-Search API version `3.4`.
+
+> Check the [upgrade section](#upgrade) for upgrade instructions
 
 ## Maintenance operations
 
@@ -71,7 +74,7 @@ where `{container-name}` is the name of the container assigned to the search eng
 The command will output something like
 
 ```
-K-Search Engine, based on SOLR 5.5.4.
+K-Search Engine, based on SOLR 7.4.0.
 Optimizing the index...
   % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
                                  Dload  Upload   Total   Spent    Left  Speed
@@ -93,6 +96,14 @@ While in the log you should see an entry with `Starting optimize...`
 [...] o.a.s.u.DirectUpdateHandler2 end_commit_flush
 [...] o.a.s.u.p.LogUpdateProcessorFactory [k-search]  webapp=/solr pa
 ```
+
+## Upgrade
+
+### Upgrade from 0.4.2 to 1.0.x
+
+The index upgrade from 0.4.2 to 1.0 cannot be done automatically, as consequence of the move from SOLR 5 to SOLR 7 directly.
+
+To upgrade delete your current search index before starting the upgraded K-Search Engine container.
 
 ## License
 
