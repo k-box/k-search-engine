@@ -1,12 +1,12 @@
 stages:
-    - lint
-    - build
-    - release
-    - deploy
+  - lint
+  - build
+  - release
+  - deploy
 
 variables:
-    CONTAINER_RELEASE_IMAGE_BASE: $CI_REGISTRY/images/k-search-engine
-    GIT_SUBMODULE_STRATEGY: normal
+  CONTAINER_RELEASE_IMAGE_BASE: $CI_REGISTRY/images/k-search-engine
+  GIT_SUBMODULE_STRATEGY: normal
 
 test-shell-syntax:
   stage: lint
@@ -17,49 +17,49 @@ test-shell-syntax:
     - docker
 
 build:
-    stage: build
-    tags:
-        - dind
-    script:
-        - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
-        - docker build -t $CI_REGISTRY_IMAGE:${CI_COMMIT_REF_NAME//\//-} .
-        - docker tag $CI_REGISTRY_IMAGE:${CI_COMMIT_REF_NAME//\//-} "k-search-engine"
-        - docker-compose -f ./docker-compose.test.yml up -d
-        - sleep 5 # wait for 5 seconds, this should be enough to see startup log entries
-        - docker-compose -f ./docker-compose.test.yml logs &> docker_output.log
-        - docker-compose -f ./docker-compose.test.yml down
-        - grep -c "Welcome to Apache Solr" docker_output.log
-        - grep -c "/opt/solr/k-search" docker_output.log
-        - docker push $CI_REGISTRY_IMAGE:${CI_COMMIT_REF_NAME//\//-}
+  stage: build
+  tags:
+    - dind
+  script:
+    - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
+    - docker build -t $CI_REGISTRY_IMAGE:${CI_COMMIT_REF_NAME//\//-} .
+    - docker tag $CI_REGISTRY_IMAGE:${CI_COMMIT_REF_NAME//\//-} "k-search-engine"
+    - docker-compose -f ./docker-compose.test.yml up -d
+    - sleep 5 # wait for 5 seconds, this should be enough to see startup log entries
+    - docker-compose -f ./docker-compose.test.yml logs &> docker_output.log
+    - docker-compose -f ./docker-compose.test.yml down
+    - grep -c "Welcome to Apache Solr" docker_output.log
+    - grep -c "/opt/solr/k-search" docker_output.log
+    - docker push $CI_REGISTRY_IMAGE:${CI_COMMIT_REF_NAME//\//-}
 
 push_master:
-    stage: release
-    tags:
-        - shell
-    script:
-        - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
-        - docker pull $CI_REGISTRY_IMAGE:${CI_COMMIT_REF_NAME//\//-}
-        - docker login -u $REGISTRY_RELEASE_USERNAME -p $REGISTRY_RELEASE_PASSWORD $CI_REGISTRY
-        - docker tag $CI_REGISTRY_IMAGE:${CI_COMMIT_REF_NAME//\//-} "$CONTAINER_RELEASE_IMAGE_BASE:latest"
-        - docker push "$CONTAINER_RELEASE_IMAGE_BASE:latest"
-    only:
-        - master
+  stage: release
+  tags:
+    - shell
+  script:
+    - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
+    - docker pull $CI_REGISTRY_IMAGE:${CI_COMMIT_REF_NAME//\//-}
+    - docker login -u $REGISTRY_RELEASE_USERNAME -p $REGISTRY_RELEASE_PASSWORD $CI_REGISTRY
+    - docker tag $CI_REGISTRY_IMAGE:${CI_COMMIT_REF_NAME//\//-} "$CONTAINER_RELEASE_IMAGE_BASE:latest"
+    - docker push "$CONTAINER_RELEASE_IMAGE_BASE:latest"
+  only:
+    - master
 
 push_tags:
-    stage: release
-    tags:
-        - shell
-    script:
-        - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
-        - docker pull $CI_REGISTRY_IMAGE:${CI_COMMIT_REF_NAME//\//-}
-        - docker login -u $REGISTRY_RELEASE_USERNAME -p $REGISTRY_RELEASE_PASSWORD $CI_REGISTRY
-        - docker tag $CI_REGISTRY_IMAGE:${CI_COMMIT_REF_NAME//\//-} "$CONTAINER_RELEASE_IMAGE_BASE:${CI_COMMIT_REF_NAME/v/}"
-        - docker push "$CONTAINER_RELEASE_IMAGE_BASE:${CI_COMMIT_REF_NAME/v/}"
-    only:
-        - tags
+  stage: release
+  tags:
+    - shell
+  script:
+    - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
+    - docker pull $CI_REGISTRY_IMAGE:${CI_COMMIT_REF_NAME//\//-}
+    - docker login -u $REGISTRY_RELEASE_USERNAME -p $REGISTRY_RELEASE_PASSWORD $CI_REGISTRY
+    - docker tag $CI_REGISTRY_IMAGE:${CI_COMMIT_REF_NAME//\//-} "$CONTAINER_RELEASE_IMAGE_BASE:${CI_COMMIT_REF_NAME/v/}"
+    - docker push "$CONTAINER_RELEASE_IMAGE_BASE:${CI_COMMIT_REF_NAME/v/}"
+  only:
+    - tags
 
-deploy_integration:
-  environment: Integration
+## Deploy on canary environments
+.canary_deploy: &canary_deploy
   when: manual
   stage: deploy
   tags:
@@ -67,22 +67,30 @@ deploy_integration:
     - deploy
   script:
     - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
-    - docker pull $CI_REGISTRY_IMAGE:${CI_COMMIT_REF_NAME/v/}
-    - cd ${INTEGRATION_DOCKER_FOLDER}
-    - docker tag $CI_REGISTRY_IMAGE:${CI_COMMIT_REF_NAME/v/} $INTEGRATION_DOCKER_IMAGE
-    - docker-compose down && docker-compose up -d
+    - docker pull $CI_REGISTRY_IMAGE:${CI_COMMIT_REF_NAME#v}
+    - cd $DEPLOY_FOLDER
+    - docker tag $CI_REGISTRY_IMAGE:${CI_COMMIT_REF_NAME#v} $DEPLOY_IMAGE
+    - docker-compose down -v && docker-compose up -d
 
-deploy_review:
-  environment: Review
-  when: manual
-  stage: deploy
-  tags:
-    - shell
-    - deploy
-  script:
-    - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
-    - docker pull $CI_REGISTRY_IMAGE:${CI_COMMIT_REF_NAME/v/}
-    - cd ${REVISION_DOCKER_FOLDER}
-    - docker tag $CI_REGISTRY_IMAGE:${CI_COMMIT_REF_NAME/v/} $REVISION_DOCKER_IMAGE
-    - docker-compose down && docker-compose up -d
+canary_manfred_deploy:
+  <<: *canary_deploy
+  environment: "Canary Manfred"
+  variables:
+    DEPLOY_FOLDER: $CANARY_M_FOLDER
+    DEPLOY_IMAGE: $CANARY_M_IMAGE
 
+canary_filomena_deploy:
+  <<: *canary_deploy
+  environment: "Canary Filomena"
+  variables:
+    DEPLOY_FOLDER: $CANARY_F_FOLDER
+    DEPLOY_IMAGE: $CANARY_F_IMAGE
+
+canary_try_deploy:
+  <<: *canary_deploy
+  environment: "Staging on try.kbox.net"
+  variables:
+    DEPLOY_FOLDER: $STAGING_T_FOLDER
+    DEPLOY_IMAGE: $STAGING_T_IMAGE
+  only:
+    - tags
