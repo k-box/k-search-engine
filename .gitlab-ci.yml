@@ -8,6 +8,11 @@ variables:
   CONTAINER_RELEASE_IMAGE_BASE: $CI_REGISTRY/images/k-search-engine
   GIT_SUBMODULE_STRATEGY: normal
 
+before_script:
+  - export IMAGE_TAG="${CI_COMMIT_REF_NAME#v}_${CI_COMMIT_SHA:0:10}"
+  - export CLEANED_CI_COMMIT_REF_NAME="${CI_COMMIT_REF_NAME#v}"
+  - echo $IMAGE_TAG
+
 test-shell-syntax:
   stage: lint
   image: "docker.klink.asia/alessio.vertemati/shellcheck-ci:latest"
@@ -22,28 +27,15 @@ build:
     - dind
   script:
     - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
-    - docker build -t $CI_REGISTRY_IMAGE:${CI_COMMIT_REF_NAME//\//-} .
-    - docker tag $CI_REGISTRY_IMAGE:${CI_COMMIT_REF_NAME//\//-} "k-search-engine"
+    - docker build -t $CI_REGISTRY_IMAGE:${IMAGE_TAG} .
+    - docker tag $CI_REGISTRY_IMAGE:${IMAGE_TAG} "k-search-engine"
     - docker-compose -f ./docker-compose.test.yml up -d
     - sleep 5 # wait for 5 seconds, this should be enough to see startup log entries
     - docker-compose -f ./docker-compose.test.yml logs &> docker_output.log
     - docker-compose -f ./docker-compose.test.yml down
     - grep -c "Welcome to Apache Solr" docker_output.log
     - grep -c "/opt/solr/k-search" docker_output.log
-    - docker push $CI_REGISTRY_IMAGE:${CI_COMMIT_REF_NAME//\//-}
-
-push_master:
-  stage: release
-  tags:
-    - shell
-  script:
-    - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
-    - docker pull $CI_REGISTRY_IMAGE:${CI_COMMIT_REF_NAME//\//-}
-    - docker login -u $REGISTRY_RELEASE_USERNAME -p $REGISTRY_RELEASE_PASSWORD $CI_REGISTRY
-    - docker tag $CI_REGISTRY_IMAGE:${CI_COMMIT_REF_NAME//\//-} "$CONTAINER_RELEASE_IMAGE_BASE:latest"
-    - docker push "$CONTAINER_RELEASE_IMAGE_BASE:latest"
-  only:
-    - master
+    - docker push $CI_REGISTRY_IMAGE:${IMAGE_TAG}
 
 push_tags:
   stage: release
@@ -51,10 +43,14 @@ push_tags:
     - shell
   script:
     - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
-    - docker pull $CI_REGISTRY_IMAGE:${CI_COMMIT_REF_NAME//\//-}
+    - docker pull $CI_REGISTRY_IMAGE:${IMAGE_TAG}
     - docker login -u $REGISTRY_RELEASE_USERNAME -p $REGISTRY_RELEASE_PASSWORD $CI_REGISTRY
-    - docker tag $CI_REGISTRY_IMAGE:${CI_COMMIT_REF_NAME//\//-} "$CONTAINER_RELEASE_IMAGE_BASE:${CI_COMMIT_REF_NAME/v/}"
-    - docker push "$CONTAINER_RELEASE_IMAGE_BASE:${CI_COMMIT_REF_NAME/v/}"
+    - docker tag $CI_REGISTRY_IMAGE:${IMAGE_TAG} "$CONTAINER_RELEASE_IMAGE_BASE:${CI_COMMIT_REF_NAME#v}"
+    - docker tag $CI_REGISTRY_IMAGE:${IMAGE_TAG} "$CONTAINER_RELEASE_IMAGE_BASE:latest"
+    - docker push "$CONTAINER_RELEASE_IMAGE_BASE:${CI_COMMIT_REF_NAME#v}"
+    - docker push "$CONTAINER_RELEASE_IMAGE_BASE:latest"
+    - docker rmi "$CONTAINER_RELEASE_IMAGE_BASE:${CI_COMMIT_REF_NAME#v}"
+    - docker rmi "$CONTAINER_RELEASE_IMAGE_BASE:latest"
   only:
     - tags
 
@@ -66,10 +62,13 @@ push_tags:
     - shell
     - deploy
   script:
+    - DEPLOY_TAG=$([ -z "${CI_COMMIT_TAG}" ] && echo "${IMAGE_TAG}" || echo "${CLEANED_CI_COMMIT_REF_NAME}")
+    - DEPLOY_REGISTRY=$([ -z "${CI_COMMIT_TAG}" ] && echo "${CI_REGISTRY_IMAGE}" || echo "${CONTAINER_RELEASE_IMAGE_BASE}")
+    - echo "Deploying ${DEPLOY_REGISTRY} - ${DEPLOY_TAG}..."
     - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
-    - docker pull $CI_REGISTRY_IMAGE:${CI_COMMIT_REF_NAME#v}
+    - docker pull $DEPLOY_REGISTRY:${DEPLOY_TAG}
     - cd $DEPLOY_FOLDER
-    - docker tag $CI_REGISTRY_IMAGE:${CI_COMMIT_REF_NAME#v} $DEPLOY_IMAGE
+    - docker tag $DEPLOY_REGISTRY:${DEPLOY_TAG} $DEPLOY_IMAGE
     - docker-compose down -v && docker-compose up -d
 
 canary_manfred_deploy:
