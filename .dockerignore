@@ -1,6 +1,7 @@
 .git*
 Dockerfile
 .dockerignore
+/tests/
 docker-compose.test.yml
 updateSolr.sh
 .travis.yml
