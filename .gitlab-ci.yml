@@ -15,7 +15,7 @@ before_script:
 
 test-shell-syntax:
   stage: lint
-  image: "docker.klink.asia/alessio.vertemati/shellcheck-ci:latest"
+  image: "koalaman/shellcheck-alpine:latest"
   script:
     - shellcheck ./start.sh
   tags:
