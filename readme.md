@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/k-box/k-search-engine.svg?branch=master)](https://travis-ci.org/k-box/k-search-engine)
+[![Build Status](https://travis-ci.com/k-box/k-search-engine.svg?branch=master)](https://travis-ci.com/k-box/k-search-engine)
 
 # K-Search Engine Docker image
 
@@ -8,7 +8,7 @@ The K-Search Engine is a [SOLR](https://lucene.apache.org/solr/) instance specif
 
 ```
 # Pull the image
-docker pull docker.klink.asia/images/k-search-engine:{version-tag}
+docker pull klinktech/k-search-engine:{version-tag}
 
 # Run the image one time, in this case pressing Ctrl+C will stop the container and remove it
 docker run -it --rm -p "8983:8983" --name="k-search-engine" k-search-engine
