@@ -8,7 +8,7 @@ The K-Search Engine is a [SOLR](https://lucene.apache.org/solr/) instance specif
 
 ```
 # Pull the image
-docker pull klinktech/k-search-engine:{version-tag}
+docker pull klinktechnology/k-search-engine:{version-tag}
 
 # Run the image one time, in this case pressing Ctrl+C will stop the container and remove it
 docker run -it --rm -p "8983:8983" --name="k-search-engine" k-search-engine
